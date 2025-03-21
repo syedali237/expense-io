@@ -1,4 +1,7 @@
 import { useState, useRef, JSX } from 'react';
+import { registerUser, loginUser } from '../../../api';
+import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 
 interface ContactModalProps {
     isOpen: boolean;
@@ -8,31 +11,47 @@ interface ContactModalProps {
 function LoginModal({ isOpen, onClose }: ContactModalProps): JSX.Element | null {
     const [isRegistering, setIsRegistering] = useState(false);
     const form = useRef<HTMLFormElement | null>(null);
-
-    const handleLoginSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Handle login logic here
-        console.log('Login with', { email, password });
-    };
-
-    const handleRegisterSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Handle register logic here
-        console.log('Register with', { firstName, lastName, email, password });
-    };
-
-    // Login form states
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    // Register form states
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+    const navigate  = useNavigate();
+
+    const handleLoginSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log('Login with', { email, password });
+        try {
+            const userDat = { email, password };
+            const response = await loginUser(userDat);
+            console.log(response);
+            localStorage.setItem("user-info", JSON.stringify({ name: `${response.user.firstName} ${response.user.lastName}`, token: response.token }));
+            toast.success('Login successful!');
+            navigate('/dashboard');
+            onClose();
+        } catch (error) {
+            console.error('Error logging in user:', error);
+        }
+    };
+
+    const handleRegisterSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log('Register with', { firstName, lastName, email, password });
+        try {
+            const userData = { firstName, lastName, email, password };
+            const response = await registerUser(userData);
+            console.log(response);
+            toast.success('Registration successful! Login with your credentials');
+            onClose();
+        } catch (error) {
+            console.error('Error registering user:', error);
+        }
+    };
 
     if (!isOpen) return null;
 
     return (
         <div>
+            <ToastContainer />
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
                 <div className="bg-white rounded-lg p-6 max-w-md w-full relative border border-gray-300">
                     <h2 className="text-xl font-bold mb-4">{isRegistering ? 'Register' : 'Log In'}</h2>

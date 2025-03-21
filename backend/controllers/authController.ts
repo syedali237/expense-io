@@ -1,47 +1,69 @@
-import bycrypt from 'bcryptjs';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import type { Request, Response } from 'express';
 import UserModel from '../models/userModel.ts';
 
-exports.register = async (req: Request, res: Response) => {
+const register = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { firstname, lastname, email, password } = req.body;
-        const hashedPassword = await bycrypt.hash(password, 10);
-        const user = await UserModel.create({ firstname, lastname, email, password: hashedPassword });
+      const { firstName, lastName, email, password } = req.body;
+      
+      console.log('Received data:', { firstName, lastName, email, password }); 
+      const existingUser = await UserModel.findOne({ email });
+      if (existingUser) {
+        res.status(400).send("Email is already taken.");
+        return;
+    }
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-        res.status(201).json({ user }).send("User created successfully");
+      const user = await UserModel.create({
+        firstName,
+        lastName,
+        email,
+        password: hashedPassword,
+      });
+  
+      res.status(201).json({ user });
     } catch (error) {
-        res.status(400).send("An error occurred while creating the user");
+      console.error("Error in registration:", error); // Log the error
+      res.status(500).send("An error occurred while creating the user.");
     }
-}
-
-exports.login = async (req: Request, res: Response) => {
+  };
+  
+const login = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { email, password } = req.body;
-        const user = await UserModel.findOne({ email });
-
-        if (!user || !(await bycrypt.compare(password, user.password))) {
-            return res.status(400).send("Invalid credentials");
-        }
-
-        if (!process.env.JWT_SECRET) {
-            throw new Error("JWT_SECRET is not defined");
-        }
-
-        const token = jwt.sign(
-            { _id: user._id, email },
-            process.env.JWT_SECRET, { expiresIn: "2h" }
-        );
-
-        res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
-        res.status(200).send("User logged in successfully").json({ user, token });
+      const { email, password } = req.body;
+  
+      const user = await UserModel.findOne({ email });
+  
+      if (!user || !(await bcrypt.compare(password, user.password))) {
+        res.status(400).send("Invalid credentials");
+        return 
+      }
+  
+      if (!process.env.JWT_SECRET) {
+        throw new Error("JWT_SECRET is not defined");
+      }
+  
+      const token = jwt.sign(
+        { _id: user._id, email },
+        process.env.JWT_SECRET, { expiresIn: "2h" }
+      );
+  
+      res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+      res.status(200).json({ user, token }); 
+      return 
+    } catch (error) {
+      console.error("Error in login:", error); 
+      if (!res.headersSent) {
+        res.status(500).send("An error occurred while logging in the user");
+      }
     }
-    catch (error) {
-        res.status(400).send("An error occurred while logging in the user");
-    }
-}
+  };
+  
 
-exports.logout = async (_req: Request, res: Response) => {
+const logout = async (_req: Request, res: Response) : Promise<void> => {
     res.clearCookie('token');
     res.status(200).send('Logged out successfully');
 };
+
+export { register, login, logout };

@@ -1,12 +1,13 @@
-import React from 'react'
 import Navbar from '../components/Layout/Navabar'
 import Footer from '../components/Layout/Footer'
+import ExpenseManagement from '../components/Dashboard/ExpenseManagement'
 
 function DashboardPage() {
+
   return (
     <div>
         <Navbar />
-        <p>DashboardPage</p>
+        <ExpenseManagement  />
         <Footer />
     </div>
   )
