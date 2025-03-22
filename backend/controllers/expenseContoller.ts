@@ -2,11 +2,10 @@ import { Request, Response } from 'express';
 import ExpenseModel from '../models/expenseModal.ts';
 import mongoose from 'mongoose';
 
-// Add an expense
 const addExpense = async (req: Request, res: Response): Promise<void> => {
   try {
     const { expenseName, amount, category, date, description } = req.body;
-    const userId = req.userId; // Now we can access userId from the request
+    const userId = req.userId; 
 
     const newExpense = new ExpenseModel({
       expenseName,
@@ -14,7 +13,7 @@ const addExpense = async (req: Request, res: Response): Promise<void> => {
       category,
       date,
       description,
-      user: userId, // Link the expense to the logged-in user
+      user: userId, 
     });
 
     await newExpense.save();
@@ -24,14 +23,13 @@ const addExpense = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// Update an expense
 const updateExpense = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { expenseName, amount, category, date, description } = req.body;
 
     const updatedExpense = await ExpenseModel.findOneAndUpdate(
-      { _id: id, user: req.userId }, // Ensure only the logged-in user can update their own expenses
+      { _id: id, user: req.userId },
       { expenseName, amount, category, date, description },
       { new: true }
     );
@@ -47,7 +45,6 @@ const updateExpense = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// Delete an expense
 const deleteExpense = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
@@ -65,36 +62,9 @@ const deleteExpense = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// Get expenses with pagination and filters (date range, category)
-// const getExpenses = async (req: Request, res: Response): Promise<void> => {
-//   try {
-//     const { category, startDate, endDate, page = 1, limit = 10 } = req.query;
-//     const userId = req.userId; // Use userId from the middleware
-
-//     // Build the filter
-//     let filter: any = { user: userId };
-//     if (category) filter.category = category;
-//     if (startDate && endDate) {
-//       filter.date = { $gte: new Date(startDate as string), $lte: new Date(endDate as string) };
-//     }
-
-//     const expenses = await ExpenseModel.find(filter)
-//       .skip((Number(page) - 1) * Number(limit))
-//       .limit(Number(limit))
-//       .sort({ date: -1 });
-
-//     const totalExpenses = await ExpenseModel.countDocuments(filter);
-
-//     res.status(200).json({ expenses, totalExpenses });
-//   } catch (error) {
-//     res.status(500).send('Error fetching expenses');
-//   }
-// };
 const getExpenses = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = req.userId; // Use userId from the middleware
-
-    // Build the filter to get all expenses for the logged-in user
+    const userId = req.userId; 
     let filter: any = { user: userId };
 
     const expenses = await ExpenseModel.find(filter).sort({ date: -1 });
@@ -107,11 +77,18 @@ const getExpenses = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-
-// Spending insights (total per category, percentage distribution)
 const getSpendingInsights = async (req: Request, res: Response): Promise<void> => {
+  console.log('Received request for spending insights');
   try {
+    console.log("inside getSpendingInsights");
+    
     const userId = req.userId;
+
+    if (!userId) {
+      console.log("User ID is missing in the request.");
+      res.status(400).send("User ID not found in request");
+      return 
+    }
 
     const insights = await ExpenseModel.aggregate([
       { $match: { user: new mongoose.Types.ObjectId(userId) } },
@@ -119,7 +96,8 @@ const getSpendingInsights = async (req: Request, res: Response): Promise<void> =
       { $sort: { totalSpent: -1 } },
     ]);
 
-    // Calculate the total spending for percentage distribution
+    console.log(insights);
+  
     const totalSpent = insights.reduce((sum: number, item: any) => sum + item.totalSpent, 0);
 
     const categoryPercentages = insights.map((item: any) => ({
@@ -127,6 +105,9 @@ const getSpendingInsights = async (req: Request, res: Response): Promise<void> =
       totalSpent: item.totalSpent,
       percentage: (item.totalSpent / totalSpent) * 100,
     }));
+
+    console.log(categoryPercentages);
+    
 
     res.status(200).json({ categoryPercentages, totalSpent });
   } catch (error) {

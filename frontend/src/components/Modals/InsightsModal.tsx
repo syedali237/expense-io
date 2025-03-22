@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import { fetchSpendingInsights } from "../../../api";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -8,11 +9,12 @@ function InsightsModal({ onClose }: { onClose: () => void }) {
   const [insightsData, setInsightsData] = useState<any>(null);
 
   useEffect(() => {
-    // Fetch data for spending insights
+
     const fetchInsights = async () => {
       try {
-        const response = await fetch("/api/expenses/insights"); // Your API endpoint to fetch insights
-        const data = await response.json();
+        const data = await fetchSpendingInsights();
+        console.log(data);
+
         setInsightsData(data);
       } catch (error) {
         console.error("Error fetching insights:", error);
@@ -42,7 +44,30 @@ function InsightsModal({ onClose }: { onClose: () => void }) {
           <h2 className="text-xl font-bold mb-4">Expense Insights</h2>
           {insightsData ? (
             <div>
-              <Bar data={chartData} options={{ responsive: true, plugins: { title: { display: true, text: "Category-wise Spending" } } }} />
+              <Bar
+                data={chartData}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    title: {
+                      display: true,
+                      text: "Category-wise Spending",
+                    },
+                  },
+                }}
+              />
+
+              <div className="mt-4">
+                <h3 className="text-lg font-bold">Category-wise Percentage Distribution:</h3>
+                <ul className="space-y-2 mt-2">
+                  {insightsData.categoryPercentages.map((item: any, index: number) => (
+                    <li key={index} className="flex justify-between">
+                      <span>{item.category}</span>
+                      <span>{item.percentage.toFixed(2)}%</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           ) : (
             <p>Loading insights...</p>

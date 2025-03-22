@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { addExpense } from '../../../api';
 
-function AddExpense({ onClose }: { onClose: () => void }) {
+function AddExpense({ onClose, onAdd }: { onClose: () => void; onAdd : (newExpense :any) => void } ) {
   const [category, setCategory] = useState('');
   const [amount, setAmount] = useState('');
   const [expenseName, setExpenseName] = useState('');
@@ -22,6 +22,7 @@ function AddExpense({ onClose }: { onClose: () => void }) {
         };
         const response = await addExpense(expenseData);
         console.log(response); 
+        onAdd(response);  // Call onAdd to update the expenses list
         onClose();  
       } catch (error) {
         console.error('Error adding expense:', error);

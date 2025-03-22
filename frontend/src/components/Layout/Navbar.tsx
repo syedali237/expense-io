@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import LoginModal from "../Modals/LoginModal";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { logoutUser } from "../../../api";
 
 function Navbar() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -24,7 +25,8 @@ function Navbar() {
         setIsModalOpen(false);
     };
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        await logoutUser(); 
         localStorage.removeItem("user-info");
         setUserInfo(null);
         navigate("/");

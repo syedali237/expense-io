@@ -1,4 +1,4 @@
-import Navbar from '../components/Layout/Navabar'
+import Navbar from '../components/Layout/Navbar'
 import Footer from '../components/Layout/Footer'
 import ExpenseManagement from '../components/Dashboard/ExpenseManagement'
 

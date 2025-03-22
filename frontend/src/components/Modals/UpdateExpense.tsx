@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { updateExpense } from '../../../api';  // Import the updateExpense API call
+import { updateExpense } from '../../../api'; 
 
-function UpdateExpense({ onClose, expense, onUpdate }: { onClose: () => void, expense: any, onUpdate: () => void }) {
+function UpdateExpense({ onClose, expense, onUpdate }: { onClose: () => void, expense: any, onUpdate: (updatedExpense :any) => void }) {
   const [category, setCategory] = useState('');
   const [amount, setAmount] = useState('');
   const [expenseName, setExpenseName] = useState('');
@@ -10,7 +10,6 @@ function UpdateExpense({ onClose, expense, onUpdate }: { onClose: () => void, ex
   const [isOtherCategory, setIsOtherCategory] = useState(false);
   const form = useRef<HTMLFormElement | null>(null);
 
-  // Populate the fields with the expense data
   useEffect(() => {
     if (expense) {
       setExpenseName(expense.expenseName);
@@ -24,22 +23,45 @@ function UpdateExpense({ onClose, expense, onUpdate }: { onClose: () => void, ex
 
   const handleUpdateExpenseSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const updatedData = {
-        expenseName,
-        amount,
-        category: isOtherCategory ? 'Other: ' + category : category,
-        date,
-        description,
-      };
-      const response = await updateExpense(expense._id, updatedData);  // Call the API to update the expense
-      console.log(response);
-      onUpdate();  // Trigger an update to the expense list after modification
-      onClose();   // Close the modal after submitting
-    } catch (error) {
-      console.error('Error updating expense:', error);
+  
+    const updatedData = {
+      expenseName,
+      amount,
+      category: isOtherCategory ? 'Other: ' + category : category,
+      date,
+      description,
+    };
+  
+    if (expense && expense._id) {
+      try {
+        const response = await updateExpense(expense._id, updatedData); 
+        console.log(response);
+        onUpdate(response); 
+        onClose();  
+      } catch (error) {
+        console.error('Error updating expense:', error);
+      }
+    } else {
+      console.error('Expense id not found');
     }
   };
+
+
+  // // debugging
+  // useEffect(() => {
+  //   if (expense) {
+  //     console.log('Expense name:', expense.expenseName);  // Debug log to check the structure of expense
+  //     console.log('Expense id:', expense._id);  // Debug log to check the structure of expense
+  //     setExpenseName(expense.expenseName);
+  //     setAmount(expense.amount);
+  //     setCategory(expense.category);
+  //     setDate(expense.date);
+  //     setDescription(expense.description);
+  //     setIsOtherCategory(expense.category === 'Other');
+  //   }
+  // }, [expense]);
+  
+  
 
   return (
     <div>

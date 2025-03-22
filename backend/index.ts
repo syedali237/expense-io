@@ -12,8 +12,8 @@ import connectToDB from './config/db.ts';
 connectToDB();
 
 const corsOptions = {
-  origin: 'http://localhost:5173', // Allow the frontend to make requests
-  credentials: true, // Allow cookies or other credentials to be sent
+  origin: 'http://localhost:5173',
+  credentials: true, 
 };
 
 app.use(cors(corsOptions));
