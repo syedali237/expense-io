@@ -130,6 +130,16 @@ An endpoint aggregates expenses by category and provides:
 }
 ```
 
+## Preview 
+
+https://github.com/user-attachments/assets/b67f6612-a792-415d-9095-dcf31c09fd48
+
+*Collections inside the DB:*
+
+<img width="1121" alt="Screenshot 2025-03-23 at 4 27 20 AM" src="https://github.com/user-attachments/assets/3b360760-8985-4615-8cde-0350e9c83e48" />
+
+
+
 ## Local Setup Instructions
 
 ### Prerequisites
