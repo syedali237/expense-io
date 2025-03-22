@@ -56,7 +56,10 @@ export const addExpense = async (expenseData: { expenseName: string; amount: str
             withCredentials: true,
         });
         return response.data;
-    } catch (error) {
+    } catch (error : any) {
+        if (error.response && error.response.status === 401) {
+            return handleTokenRefresh(error.config);  // Refresh token and retry the request
+        }
         console.error('Error adding expense:', error);
         throw error;
     }
@@ -87,7 +90,10 @@ export const updateExpense = async (id: string, expenseData: {
         });
 
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
+        if (error.response && error.response.status === 401) {
+            return handleTokenRefresh(error.config);  // Refresh token and retry the request
+        }
         console.error('Error updating expense:', error);
         throw error;
     }
@@ -137,7 +143,10 @@ export const deleteExpense= async (id: string) => {
         });
 
         return response.data;
-    } catch (error) {
+    }catch (error : any) {
+        if (error.response && error.response.status === 401) {
+            return handleTokenRefresh(error.config);
+        }
         console.error('Error deleting user:', error);
         throw error;
     }
@@ -166,8 +175,35 @@ export const fetchSpendingInsights = async () => {
         withCredentials: true,
       });
       return response.data;
-    } catch (error) {
+    } catch (error : any) {
+        if (error.response && error.response.status === 401) {
+            return handleTokenRefresh(error.config);
+        }
       console.error("Error fetching spending insights:", error);
       throw error;
     }
   };
+
+  const handleTokenRefresh = async (originalRequest: any) => {
+    try {
+        const newToken = await refreshAccessToken(); 
+        const userInfo = JSON.parse(localStorage.getItem("user-info") || "{}");
+        userInfo.token = newToken;
+        localStorage.setItem("user-info", JSON.stringify(userInfo));  
+        originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+        return axios(originalRequest);  
+    } catch (refreshError) {
+        console.error("Error refreshing token:", refreshError);
+        throw refreshError;
+    }
+};
+
+  export const refreshAccessToken = async () => {
+    try {
+        const response = await axios.post(`${API_URL}/api/auth/refreshToken`, {}, { withCredentials: true });
+        return response.data.accessToken; 
+    } catch (error) {
+        console.error("Error refreshing token:", error);
+        throw error;
+    }
+};

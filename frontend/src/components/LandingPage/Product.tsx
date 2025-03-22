@@ -1,10 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+interface UserInfo {
+    name: string;
+    token: string;
+}
 import logo from '../../assets/expenses.png';
 import LoginModal from '../Modals/LoginModal';
 
 function Product() {
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -13,6 +20,12 @@ function Product() {
     const handleCloseModal = () => {
         setIsModalOpen(false);
     }
+
+    useEffect(() => {
+        const data = localStorage.getItem("user-info");
+        const userData = data ? JSON.parse(data) : null;
+        setUserInfo(userData);
+      }, []);
 
     return (
         <div className="bg-secondary w-full h-[410px] mx-auto flex px-[75px] justify-between">
@@ -26,11 +39,13 @@ function Product() {
                     <br />
                     tools designed for your busy life.
                 </p>
+                {!userInfo ? (
                 <button
                     onClick={handleOpenModal}
                     className="bg-primary text-white rounded-[36px] flex items-center justify-center px-6 py-2 mt-[14px] text-[16px] w-[169px] h-[33.5px]">
                     Get Started
                 </button>
+                ): null}
             </div>
 
             <div className="flex items-center mr-[110px]" data-aos="fade-up" data-aos-delay="100">

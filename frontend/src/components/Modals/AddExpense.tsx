@@ -22,7 +22,7 @@ function AddExpense({ onClose, onAdd }: { onClose: () => void; onAdd : (newExpen
         };
         const response = await addExpense(expenseData);
         console.log(response); 
-        onAdd(response);  // Call onAdd to update the expenses list
+        onAdd(response); 
         onClose();  
       } catch (error) {
         console.error('Error adding expense:', error);

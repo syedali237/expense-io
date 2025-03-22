@@ -46,23 +46,6 @@ function UpdateExpense({ onClose, expense, onUpdate }: { onClose: () => void, ex
     }
   };
 
-
-  // // debugging
-  // useEffect(() => {
-  //   if (expense) {
-  //     console.log('Expense name:', expense.expenseName);  // Debug log to check the structure of expense
-  //     console.log('Expense id:', expense._id);  // Debug log to check the structure of expense
-  //     setExpenseName(expense.expenseName);
-  //     setAmount(expense.amount);
-  //     setCategory(expense.category);
-  //     setDate(expense.date);
-  //     setDescription(expense.description);
-  //     setIsOtherCategory(expense.category === 'Other');
-  //   }
-  // }, [expense]);
-  
-  
-
   return (
     <div>
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -83,8 +66,7 @@ function UpdateExpense({ onClose, expense, onUpdate }: { onClose: () => void, ex
                 onChange={(e) => setExpenseName(e.target.value)}
               />
             </div>
-            
-            {/* Amount */}
+          
             <div className="mb-4">
               <label htmlFor="amount" className="block text-sm font-medium mb-1">
                 Amount
@@ -98,7 +80,6 @@ function UpdateExpense({ onClose, expense, onUpdate }: { onClose: () => void, ex
               />
             </div>
 
-            {/* Category */}
             <div className="mb-4">
               <label htmlFor="category" className="block text-sm font-medium mb-1">
                 Category
@@ -134,7 +115,6 @@ function UpdateExpense({ onClose, expense, onUpdate }: { onClose: () => void, ex
               )}
             </div>
 
-            {/* Date */}
             <div className="mb-4">
               <label htmlFor="date" className="block text-sm font-medium mb-1">
                 Date
@@ -148,7 +128,6 @@ function UpdateExpense({ onClose, expense, onUpdate }: { onClose: () => void, ex
               />
             </div>
 
-            {/* Description */}
             <div className="mb-4">
               <label htmlFor="description" className="block text-sm font-medium mb-1">
                 Description

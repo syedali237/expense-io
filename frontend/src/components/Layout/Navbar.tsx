@@ -4,9 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { logoutUser } from "../../../api";
 
+interface UserInfo {
+    name: string;
+    token: string;
+}
+
 function Navbar() {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const [userInfo, setUserInfo] = useState<any>(null);
+    const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const navigate = useNavigate();
 

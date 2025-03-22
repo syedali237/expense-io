@@ -71,6 +71,14 @@ function ExpenseManagement() {
         });
     };
 
+    const formatDate = (dateString: string) => {
+        const date = new Date(dateString);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear().toString().slice(-2);
+        return `${day}-${month}-${year}`;
+    };
+
     useEffect(() => {
         const fetchExpensesData = async () => {
             try {
@@ -168,7 +176,7 @@ function ExpenseManagement() {
                                 <td className="px-6 py-4 text-sm">{index + 1}</td>
                                 <td className="px-6 py-4 text-sm text-black break-words max-w-xs">{expense.amount}</td>
                                 <td className="px-6 py-4 text-sm text-black break-words max-w-xs">{expense.category}</td>
-                                <td className="px-6 py-4 text-sm text-black break-words max-w-xs">{expense.date}</td>
+                                <td className="px-6 py-4 text-sm text-black break-words max-w-xs">{formatDate(expense.date)}</td>
                                 <td>
                                     <button
                                         onClick={() => handleViewExpense(expense)}

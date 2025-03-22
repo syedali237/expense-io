@@ -1,4 +1,12 @@
 function ViewExpense({ onClose, expense }: { onClose: () => void, expense: any }) {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString().slice(-2);
+    return `${day}-${month}-${year}`;
+  };
+
   return (
     <div>
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -12,7 +20,7 @@ function ViewExpense({ onClose, expense }: { onClose: () => void, expense: any }
 
           <div className="mb-4">
             <label className="block text-sm font-semibold mb-1">Amount</label>
-            <p className="text-sm">${expense.amount}</p>
+            <p className="text-sm">Rs. {expense.amount}</p>
           </div>
 
           <div className="mb-4">
@@ -22,7 +30,7 @@ function ViewExpense({ onClose, expense }: { onClose: () => void, expense: any }
 
           <div className="mb-4">
             <label className="block text-sm font-semibold mb-1">Date</label>
-            <p className="text-sm">{expense.date}</p>
+            <p className="text-sm">{formatDate(expense.date)}</p>
           </div>
 
           <div className="mb-4">
