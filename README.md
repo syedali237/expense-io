@@ -166,3 +166,6 @@ https://github.com/user-attachments/assets/b67f6612-a792-415d-9095-dcf31c09fd48
    | `npm install` | Frontend & Backend | Install dependencies |
    | `npm run dev` | Frontend | Start dev server at `localhost:5173` |
    | `npm start` | Backend | Start server at `localhost:8000` |
+
+
+### Note: Backend deployed on free render instance so might take 40-50 seconds for a response.
