@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000';
+// const API_URL = 'http://localhost:8000';
+const API_URL = 'https://testrepov2.onrender.com';
 
 export const registerUser = async (userData: {
     firstName: string;
