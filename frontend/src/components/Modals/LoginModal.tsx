@@ -26,6 +26,7 @@ function LoginModal({ isOpen, onClose }: ContactModalProps): JSX.Element | null 
             console.log(response);
             localStorage.setItem("user-info", JSON.stringify({ name: `${response.user.firstName} ${response.user.lastName}`, token: response.token }));
             toast.success('Login successful!');
+            alert('Login successful!');
             navigate('/dashboard');
             onClose();
         } catch (error) {
@@ -41,6 +42,7 @@ function LoginModal({ isOpen, onClose }: ContactModalProps): JSX.Element | null 
             const response = await registerUser(userData);
             console.log(response);
             toast.success('Registration successful! Login with your credentials');
+            alert('Registration successful! Login with your credentials');
             onClose();
         } catch (error) {
             console.error('Error registering user:', error);
