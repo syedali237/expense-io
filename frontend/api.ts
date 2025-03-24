@@ -14,6 +14,7 @@ export const registerUser = async (userData: {
             headers: {
                 'Content-Type': 'application/json',
             },
+            withCredentials: true,
         });
         return response.data;
     } catch (error) {
@@ -116,6 +117,7 @@ export const fetchExpenses = async () => {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
+            withCredentials: true,
         });
 
         return { expenses: response.data.expenses, totalExpenses: response.data.totalExpenses };
